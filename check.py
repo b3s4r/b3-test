@@ -1,14 +1,19 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+import sys
 
 t0 = time.time()
 
 opts = webdriver.ChromeOptions()
 opts.headless = True
 
+port = sys.argv[1]
+executor = 'http://localhost:' + port
+print(executor)
+
 #driver = webdriver.Chrome(options = opts)
-driver = webdriver.Remote(command_executor='http://localhost:9515', options = opts)
+driver = webdriver.Remote(command_executor=executor, options = opts)
 t1 = time.time()
 print('connect', t1 - t0)
 
