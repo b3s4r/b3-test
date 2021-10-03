@@ -1,14 +1,19 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import unittest
 import sys
+
 
 def connect_driver():
     t0 = time.time()
 
     opts = webdriver.ChromeOptions()
-    opts.headless = True
+    #opts.headless = True
+    opts.add_argument("--incognito")
 
     port = '9515'
     if len(sys.argv) > 1:
@@ -51,10 +56,12 @@ class TestPythonOrg(unittest.TestCase):
 class TestAftonbladet(unittest.TestCase):
     def setUp(self):
         self.wd = connect_driver()
-
-    def test_get_content(self):
         self.wd.get('https://www.aftonbladet.se')
 
+    def tearDown(self):
+        self.wd.close()
+
+    def test_get_content(self):
         # OK as long as the section contains some elements in the main section.
         section = self.wd.find_element_by_tag_name('section')
         divs = section.find_elements_by_tag_name('div')
@@ -65,6 +72,28 @@ class TestAftonbladet(unittest.TestCase):
         divs = side.find_elements_by_tag_name('div')
         self.assertNotEqual(0, len(divs))
 
+
+
+class TestWhitePouches(unittest.TestCase):
+    def setUp(self):
+        self.wd = connect_driver()
+        self.wd.get('https://www.whitepouches.com')
+
+    def tearDown(self):
+        self.wd.close()
+
+    def test_age_confirmation(self):
+        confirm = self.wd.find_element_by_class_name('age-confirmation')
+        btn = confirm.find_element_by_tag_name('button')
+        btn.click()
+
+        # print(c0)
+
+        # confirmation = WebDriverWait(self.wd, 3).until(
+        #     EC.presence_of_element_located((By.CLASS_NAME, "age-confirmation"))
+        # )
+
+        #confirmation.find_element_by_class_name(
 
 
 if __name__ == '__main__':
