@@ -10,8 +10,8 @@ import unittest
 import sys
 
 
-maybe_port = None
-
+maybe_driver_port = None
+maybe_chrome_port = None
 
 def connect_driver():
     t0 = time.time()
@@ -20,14 +20,20 @@ def connect_driver():
     #caps["debuggerAddress"] = "localhost"
 
     opts = webdriver.ChromeOptions()
-    opts.headless = True
-    opts.debugger_address = "localhost:9222"
-    #opts.add_argument("--incognito")
-    #opts.add_argument("--no-proxy-server")
+
+    print("chrome port", maybe_chrome_port)
+
+    if maybe_chrome_port != None:
+        print('reusing running chrome: ', maybe_chrome_port)
+        opts.debugger_address = "localhost:" + maybe_chrome_port
+    else:
+        opts.headless = True
+        opts.add_argument("--incognito")
+        opts.add_argument("--no-proxy-server")
 
     port = '9515'
-    if maybe_port != None:
-        port = maybe_port
+    if maybe_driver_port != None:
+        port = maybe_driver_port
 
     executor = 'http://localhost:' + port
     print(executor)
@@ -37,6 +43,7 @@ def connect_driver():
     print(driver.desired_capabilities)
     t1 = time.time()
     print('connect', t1 - t0)
+    driver.delete_all_cookies()
     return driver
 
 
@@ -121,20 +128,28 @@ class TestWhitePouches(unittest.TestCase):
         self.assertIsNone(c3)
 
 
-if __name__ == '__main__':
-    # the second passed argument might me the port; if so then we need to remove
-    # if from sys.argv or it break the assumption in unittest.main(...)
-    if len(sys.argv) > 1:
-        # if port then the first argument after the binary name
-        # should be a port; so let's try to parse it as an int.
+def maybe_remove_port(at):
+    if len(sys.argv) > at:
+        print(at, sys.argv)
         try:
-            port = int(sys.argv[1])
-            maybe_port = sys.argv[1]
-            sys.argv.pop(1)
-            print('modified sys.argv to work with unittest.main(...)')
+            port = int(sys.argv[at])
+            t = sys.argv.pop(at)
+            print('modified sys.argv to work with unittest.main(...)', port)
+            return t
+
         except:
             # parse failed, ok to ignore? I think :)
-            pass
+            print('port removal failed')
+            return None
+
+
+if __name__ == '__main__':
+    print(sys.argv)
+    maybe_chrome_port = maybe_remove_port(2)
+    print("c:", maybe_chrome_port)
+    maybe_driver_port = maybe_remove_port(1)
+    print("d:", maybe_driver_port)
+    print(sys.argv)
 
 
     unittest.main(warnings='ignore')
