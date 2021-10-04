@@ -108,7 +108,7 @@ class TestWhitePouches(unittest.TestCase):
         except:
             return None
 
-    def test_age_confirmation(self):
+    def check_age_confirmation(self):
         # Age confirmation should always be shown on the first load
         # but then hidden on all subsequent loads. When shown and clicked
         # it should be hidden.
@@ -120,12 +120,19 @@ class TestWhitePouches(unittest.TestCase):
         for i in range(10):
             c2 = self.find_age_confirmation()
 
-        self.assertIsNone(c2)
+            self.assertIsNone(c2)
 
-        self.wd.get('https://www.whitepouches.com')
-        c3 = self.find_age_confirmation()
+            self.wd.get('https://www.whitepouches.com')
+            c3 = self.find_age_confirmation()
 
-        self.assertIsNone(c3)
+            self.assertIsNone(c3)
+
+    def test_age_confirmation(self):
+        self.check_age_confirmation()
+
+    def test_10_age_confirmation(self):
+        for n in range(n):
+            self.check_age_confirmation(10)
 
 
 def maybe_remove_port(at):
