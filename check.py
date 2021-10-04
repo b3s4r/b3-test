@@ -17,12 +17,13 @@ def connect_driver():
     t0 = time.time()
 
     caps = DesiredCapabilities.CHROME.copy()
-    #caps["pageLoadStrategy"] = "eager"
+    #caps["debuggerAddress"] = "localhost"
 
     opts = webdriver.ChromeOptions()
     opts.headless = True
-    opts.add_argument("--incognito")
-    opts.add_argument("--no-proxy-server")
+    opts.debugger_address = "localhost:9222"
+    #opts.add_argument("--incognito")
+    #opts.add_argument("--no-proxy-server")
 
     port = '9515'
     if maybe_port != None:
@@ -33,6 +34,7 @@ def connect_driver():
 
     #driver = webdriver.Chrome(options = opts)
     driver = webdriver.Remote(command_executor=executor, options = opts, desired_capabilities = caps)
+    print(driver.desired_capabilities)
     t1 = time.time()
     print('connect', t1 - t0)
     return driver
@@ -58,7 +60,7 @@ class TestPythonOrg(unittest.TestCase):
         print('test', time.time() - t2)
 
         assert 'No results found.' not in driver.page_source
-        driver.close()
+        #driver.close()
 
 
 
@@ -68,7 +70,8 @@ class TestAftonbladet(unittest.TestCase):
         self.wd.get('https://www.aftonbladet.se')
 
     def tearDown(self):
-        self.wd.close()
+        #self.wd.close()
+        pass
 
     def test_get_content(self):
         # OK as long as the section contains some elements in the main section.
@@ -89,7 +92,8 @@ class TestWhitePouches(unittest.TestCase):
         self.wd.get('https://www.whitepouches.com')
 
     def tearDown(self):
-        self.wd.close()
+        #self.wd.close()
+        pass
 
     def find_age_confirmation(self):
         try:
