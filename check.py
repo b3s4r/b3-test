@@ -8,16 +8,19 @@ import unittest
 import sys
 
 
+maybe_port = None
+
+
 def connect_driver():
     t0 = time.time()
 
     opts = webdriver.ChromeOptions()
-    #opts.headless = True
+    opts.headless = True
     opts.add_argument("--incognito")
 
     port = '9515'
-    if len(sys.argv) > 1:
-        port = sys.argv[1]
+    if maybe_port != None:
+        port = maybe_port
 
     executor = 'http://localhost:' + port
     print(executor)
@@ -80,21 +83,49 @@ class TestWhitePouches(unittest.TestCase):
         self.wd.get('https://www.whitepouches.com')
 
     def tearDown(self):
-        self.wd.close()
+        #self.wd.close()
+        pass
+
+    def find_age_confirmation(self):
+        try:
+            return self.wd.find_element_by_class_name('age-confirmation')
+        except:
+            return None
 
     def test_age_confirmation(self):
-        confirm = self.wd.find_element_by_class_name('age-confirmation')
+        # Age confirmation should always be shown on the first load
+        # but then hidden on all subsequent loads. When shown and clicked
+        # it should be hidden.
+        confirm = self.find_age_confirmation()
         btn = confirm.find_element_by_tag_name('button')
         btn.click()
 
-        # print(c0)
+        c2 = None
+        for i in range(10):
+            c2 = self.find_age_confirmation()
 
-        # confirmation = WebDriverWait(self.wd, 3).until(
-        #     EC.presence_of_element_located((By.CLASS_NAME, "age-confirmation"))
-        # )
+        self.assertIsNone(c2)
 
-        #confirmation.find_element_by_class_name(
+        self.wd.get('https://www.whitepouches.com')
+        c3 = self.find_age_confirmation()
+
+        self.assertIsNone(c3)
 
 
 if __name__ == '__main__':
+    # the second passed argument might me the port; if so then we need to remove
+    # if from sys.argv or it break the assumption in unittest.main(...)
+    if len(sys.argv) > 1:
+        # if port then the first argument after the binary name
+        # should be a port; so let's try to parse it as an int.
+        try:
+            port = int(sys.argv[1])
+            maybe_port = sys.argv[1]
+            sys.argv.pop(1)
+            print('modified sys.argv to work with unittest.main(...)')
+        except:
+            # parse failed, ok to ignore? I think :)
+            pass
+
+
     unittest.main(warnings='ignore')
