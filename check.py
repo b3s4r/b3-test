@@ -3,6 +3,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
 import time
 import unittest
 import sys
@@ -14,9 +16,13 @@ maybe_port = None
 def connect_driver():
     t0 = time.time()
 
+    caps = DesiredCapabilities.CHROME.copy()
+    #caps["pageLoadStrategy"] = "eager"
+
     opts = webdriver.ChromeOptions()
     opts.headless = True
     opts.add_argument("--incognito")
+    opts.add_argument("--no-proxy-server")
 
     port = '9515'
     if maybe_port != None:
@@ -26,7 +32,7 @@ def connect_driver():
     print(executor)
 
     #driver = webdriver.Chrome(options = opts)
-    driver = webdriver.Remote(command_executor=executor, options = opts)
+    driver = webdriver.Remote(command_executor=executor, options = opts, desired_capabilities = caps)
     t1 = time.time()
     print('connect', t1 - t0)
     return driver
