@@ -83,7 +83,7 @@ class TestWhitePouches(unittest.TestCase):
         self.wd.get('https://www.whitepouches.com')
 
     def tearDown(self):
-        self.wd.close()q
+        self.wd.close()
 
     def find_age_confirmation(self):
         try:
