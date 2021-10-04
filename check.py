@@ -122,10 +122,10 @@ class TestWhitePouches(unittest.TestCase):
 
             self.assertIsNone(c2)
 
-            self.wd.get('https://www.whitepouches.com')
-            c3 = self.find_age_confirmation()
+        self.wd.get('https://www.whitepouches.com')
+        c3 = self.find_age_confirmation()
 
-            self.assertIsNone(c3)
+        self.assertIsNone(c3)
 
     def test_age_confirmation(self):
         self.check_age_confirmation()
