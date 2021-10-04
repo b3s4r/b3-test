@@ -130,10 +130,6 @@ class TestWhitePouches(unittest.TestCase):
     def test_age_confirmation(self):
         self.check_age_confirmation()
 
-    def test_10_age_confirmation(self):
-        for n in range(10):
-            self.check_age_confirmation()
-
 
 def maybe_remove_port(at):
     if len(sys.argv) > at:
