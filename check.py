@@ -5,13 +5,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+import os
+import sys
 import time
 import unittest
-import sys
 
 
 maybe_driver_port = None
 maybe_chrome_port = None
+
 
 def connect_driver():
     t0 = time.time()
@@ -146,12 +148,17 @@ def maybe_remove_port(at):
             return None
 
 
+def find_port(id):
+    if id in os.environ:
+        return os.environ[id]
+
+    return None
+
+
 if __name__ == '__main__':
-    print(sys.argv)
-    maybe_chrome_port = maybe_remove_port(2)
-    print("c:", maybe_chrome_port)
-    maybe_driver_port = maybe_remove_port(1)
-    print("d:", maybe_driver_port)
+    print(sys.argv, os.environ)
+    maybe_chrome_port = find_port("B3S4R_CHROME_PORT")
+    maybe_driver_port = find_port("B3S4R_DRIVER_PORT")
     print(sys.argv)
 
 
